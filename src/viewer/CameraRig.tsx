@@ -12,7 +12,6 @@ export const DEFAULT_CAMERA: { position: Vec3; target: Vec3 } = {
   target: [0, -0.05, 0],
 };
 
-const MIN_FOCUS_RADIUS = 0.55;
 
 /** Orbit / zoom / pan controls plus smooth "fly to" moves for selection and focus. */
 export function CameraRig() {
@@ -27,8 +26,9 @@ export function CameraRig() {
     if (command.kind === 'reset') {
       // Narrow (portrait) screens need the camera further back to fit the wingspan.
       const k = aspect < 1.25 ? Math.pow(1.25 / aspect, 0.6) : 1;
-      const [tx, ty, tz] = DEFAULT_CAMERA.target;
-      const [px, py, pz] = DEFAULT_CAMERA.position.map((v, i) => DEFAULT_CAMERA.target[i] + (v - DEFAULT_CAMERA.target[i]) * k);
+      const home = drone.view ? { position: drone.view.camera, target: drone.view.target } : DEFAULT_CAMERA;
+      const [tx, ty, tz] = home.target;
+      const [px, py, pz] = home.position.map((v, i) => home.target[i] + (v - home.target[i]) * k);
       void c.setLookAt(px, py, pz, tx, ty, tz, command.nonce > 0);
       return;
     }
@@ -45,7 +45,7 @@ export function CameraRig() {
     if (box.isEmpty()) return;
     const sphere = box.getBoundingSphere(new Sphere());
     // Leave some room around a whole system so you can see how it connects.
-    sphere.radius = Math.max(sphere.radius * (command.kind === 'system' ? 1.3 : 1), MIN_FOCUS_RADIUS);
+    sphere.radius = Math.max(sphere.radius * (command.kind === 'system' ? 1.3 : 1), drone.view?.minFocusRadius ?? 0.55);
     void c.fitToSphere(sphere, true);
   }, [command, drone]); // eslint-disable-line react-hooks/exhaustive-deps -- aspect only matters at the moment of a reset
 
@@ -66,5 +66,6 @@ export function CameraRig() {
     if (useStore.getState().autoRotate) ref.current?.rotate(dt * 0.2, 0, false);
   });
 
-  return <CameraControls ref={ref} makeDefault minDistance={0.5} maxDistance={12} smoothTime={0.35} />;
+  const small = !!drone.view && drone.view.floorY > -0.6;
+  return <CameraControls ref={ref} makeDefault minDistance={small ? 0.12 : 0.5} maxDistance={small ? 4 : 12} smoothTime={0.35} />;
 }

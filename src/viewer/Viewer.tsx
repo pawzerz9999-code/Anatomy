@@ -10,7 +10,7 @@ import { DroneContext } from './Part';
 import { damp, runtime } from './runtime';
 import { xrayUniforms } from './xray';
 
-const FLOOR_Y = -1.25;
+const DEFAULT_FLOOR_Y = -1.25;
 
 /** Updates the per-frame shared values (explode, X-ray uniforms) before the parts read them. */
 function SceneDriver() {
@@ -32,7 +32,9 @@ function SceneDriver() {
   return null;
 }
 
-function Studio() {
+/** Lights, reflections, soft shadow and a floor grid, scaled to the drone's size. */
+function Studio({ floorY }: { floorY: number }) {
+  const k = floorY / DEFAULT_FLOOR_Y;
   return (
     <>
       <ambientLight intensity={0.35} />
@@ -44,17 +46,17 @@ function Studio() {
         <Lightformer intensity={1} position={[5, 1, 1]} rotation-y={-Math.PI / 2} scale={[10, 2, 1]} />
         <Lightformer intensity={0.5} color="#7dd3fc" position={[0, -3, 3]} scale={[8, 2, 1]} />
       </Environment>
-      <ContactShadows position={[0, FLOOR_Y + 0.005, 0]} opacity={0.5} scale={9} blur={2.6} far={3} resolution={512} />
+      <ContactShadows position={[0, floorY + 0.005 * k, 0]} opacity={0.5} scale={9 * k} blur={2.6} far={3 * k} resolution={512} />
       <Grid
-        position={[0, FLOOR_Y, 0]}
+        position={[0, floorY, 0]}
         args={[30, 30]}
-        cellSize={0.25}
+        cellSize={0.25 * k}
         cellThickness={0.6}
         cellColor="#1c2a3a"
-        sectionSize={1}
+        sectionSize={1 * k}
         sectionThickness={1}
         sectionColor="#2b4058"
-        fadeDistance={16}
+        fadeDistance={16 * k}
         fadeStrength={1.6}
         infiniteGrid
       />
@@ -112,7 +114,7 @@ export function Viewer() {
         onPointerMissed={() => useStore.getState().select(null)}
       >
         <SceneDriver />
-        <Studio />
+        <Studio floorY={drone.view?.floorY ?? DEFAULT_FLOOR_Y} />
         <DroneContext.Provider value={drone}>
           <Model />
           <LabelsDriver drone={drone} />

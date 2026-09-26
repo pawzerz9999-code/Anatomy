@@ -143,7 +143,6 @@ kbd {
   font-size: 11px;
 }
 .tabs {
-  margin-left: auto;
   display: flex;
   padding: 3px;
   border: 1px solid var(--line-2);
@@ -696,12 +695,227 @@ summary {
   color: var(--accent-2);
 }
 
+/* ── Launch tab ──────────────────────────────────────── */
+.launch-view {
+  position: absolute;
+  inset: 0;
+}
+.launch-view canvas {
+  display: block;
+}
+.launch-caption {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  max-width: min(420px, calc(100% - 28px));
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(13, 19, 27, 0.88);
+  border: 1px solid var(--line-2);
+  backdrop-filter: blur(6px);
+}
+.launch-caption .step-no {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.launch-caption strong {
+  display: block;
+  margin: 2px 0 4px;
+  font-size: 16px;
+}
+.launch-caption p {
+  margin: 0;
+  color: #c5d0dc;
+  font-size: 13px;
+}
+.toggles button.primary {
+  border-color: #fb923c;
+  color: #1a0f05;
+  background: #fb923c;
+  font-weight: 700;
+}
+.launch-steps {
+  padding: 16px 14px 24px;
+}
+.launch-steps h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+.launch-steps ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;
+}
+.launch-steps li {
+  position: relative;
+  padding: 10px 10px 10px 40px;
+  border-radius: 10px;
+  counter-increment: step;
+  color: var(--muted);
+}
+.launch-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--line-2);
+}
+.launch-steps li strong {
+  display: block;
+  color: var(--text);
+}
+.launch-steps li span {
+  font-size: 12.5px;
+}
+.launch-steps li.current {
+  background: rgba(251, 146, 60, 0.1);
+  box-shadow: inset 2px 0 0 #fb923c;
+}
+.launch-steps li.current::before {
+  background: #fb923c;
+  border-color: #fb923c;
+  color: #1a0f05;
+}
+.launch-steps li.done::before {
+  content: '✓';
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.launch-steps .note {
+  margin: 12px 4px 0;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* ── Learn guides ──────────────────────────────────────── */
+.learn-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  background: var(--panel);
+}
+.learn-btn:hover {
+  border-color: var(--accent);
+}
+.learn-btn + .tabs {
+  margin-left: 0;
+}
+.guide-link {
+  display: block;
+  margin: 10px 0;
+  color: var(--accent-2);
+  font-size: 13px;
+  text-align: left;
+}
+.guide-link:hover {
+  text-decoration: underline;
+}
+.modal.guide {
+  width: min(1000px, 100%);
+}
+.guide-body .guide-title {
+  margin: 4px 0 6px;
+  font-size: 22px;
+}
+.guide-body h4 {
+  margin: 22px 0 8px;
+  font-size: 15px;
+}
+.guide-body p,
+.guide-body li {
+  color: #c5d0dc;
+}
+.guide-body .lead {
+  color: var(--text);
+  font-size: 15px;
+}
+.guide-body ul {
+  padding-left: 20px;
+}
+.guide-body li + li {
+  margin-top: 6px;
+}
+.guide-note {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 3px solid var(--accent-2);
+  background: var(--panel-2);
+}
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 640px;
+}
+.table-wrap th,
+.table-wrap td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.table-wrap thead th {
+  background: var(--panel-2);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+}
+.table-wrap tbody th {
+  color: var(--text);
+  white-space: nowrap;
+}
+.table-wrap tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
 /* ── Realistic view ─────────────────────────────────────── */
 .realistic {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
+}
+.model-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.model-switch button {
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  color: var(--muted);
+  font-size: 13px;
+}
+.model-switch button[aria-selected='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.model-switch small {
+  color: var(--faint);
 }
 .realistic iframe {
   flex: 1;

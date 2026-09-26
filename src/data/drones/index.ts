@@ -1,10 +1,11 @@
 import type { CatalogEntry, DroneCategory, DroneDef } from '../../types';
+import { p1Sun, sting, strila } from './interceptors';
 import { shahed136 } from './shahed136';
 
 /** Drones with a full 3D anatomy model. */
-export const DRONES: Record<string, DroneDef> = {
-  [shahed136.id]: shahed136,
-};
+export const DRONES: Record<string, DroneDef> = Object.fromEntries(
+  [shahed136, sting, strila, p1Sun].map((d) => [d.id, d]),
+);
 
 export const CATEGORIES: { id: DroneCategory; name: string; description: string }[] = [
   { id: 'kamikaze', name: 'Kamikaze / loitering', description: 'One-way attack drones that carry their payload into the target.' },
@@ -23,8 +24,10 @@ export const CATALOG: CatalogEntry[] = [
   { id: 'fpv-kamikaze', name: 'FPV kamikaze quad', category: 'kamikaze', status: 'soon', blurb: 'Small racing-style quadcopter flown by video goggles.' },
   { id: 'lancet', name: 'Lancet', category: 'kamikaze', status: 'soon', blurb: 'Loitering munition with two sets of X-shaped wings.' },
   { id: 'switchblade', name: 'Switchblade', category: 'kamikaze', status: 'soon', blurb: 'Tube-launched; its wings flip open after launch.' },
+  { id: 'sting', name: 'Sting', category: 'interceptor', status: 'live', blurb: 'Wild Hornets\' bullet-shaped, 3D-printed Shahed hunter.' },
+  { id: 'strila', name: 'Strila', category: 'interceptor', status: 'live', blurb: 'WIY Drones\' rocket-shaped interceptor, reported at ≈ 350 km/h.' },
+  { id: 'p1-sun', name: 'P1-SUN', category: 'interceptor', status: 'live', blurb: 'SkyFall\'s low-cost modular interceptor with optional AI.' },
   { id: 'coyote', name: 'Coyote-style jet interceptor', category: 'interceptor', status: 'soon', blurb: 'Tube-launched, jet-powered drone hunter.' },
-  { id: 'fpv-interceptor', name: 'FPV interceptor quad', category: 'interceptor', status: 'soon', blurb: 'Very fast quadcopter that rams or bursts near its target.' },
   { id: 'net-interceptor', name: 'Net-capture interceptor', category: 'interceptor', status: 'soon', blurb: 'Catches other drones with a launched net.' },
   { id: 'camera-quad', name: 'Camera quadcopter', category: 'multirotor', status: 'soon', blurb: 'Folding consumer drone with a stabilised camera.' },
   { id: 'heavy-lift', name: 'Heavy-lift octocopter', category: 'multirotor', status: 'soon', blurb: 'Eight rotors for carrying cinema cameras or cargo.' },

@@ -7,6 +7,7 @@ export type SystemId =
   | 'fuel'
   | 'flight-control'
   | 'navigation'
+  | 'sensors'
   | 'power'
   | 'payload';
 
@@ -39,6 +40,8 @@ export interface PartDef {
   evidence: 'reported' | 'typical';
   /** What it is made of, where that has been reported. */
   madeOf?: string;
+  /** A Learn guide that explains more (e.g. 'engines', 'materials'). */
+  guide?: GuideId;
   /** One plain-language line: what is it? */
   summary: string;
   /** A short paragraph: what does it do and why is it built that way? */
@@ -53,6 +56,8 @@ export interface InfoSection {
   title: string;
   body: string;
 }
+
+export type GuideId = 'materials' | 'engines';
 
 export interface SourceLink {
   title: string;
@@ -81,6 +86,8 @@ export interface DroneDef {
   id: string;
   name: string;
   aka?: string;
+  /** Who makes it. */
+  maker?: string;
   category: DroneCategory;
   tagline: string;
   overview: string;
@@ -93,7 +100,12 @@ export interface DroneDef {
   parts: PartDef[];
   /** The 3D model: built in code now; a glTF file with a mesh-name → part-id map later. */
   model: { kind: 'procedural' } | { kind: 'gltf'; url: string; nodeMap: Record<string, string> };
-  sketchfab?: SketchfabEmbed;
+  /** Launch sequence (for drones with a Launch tab): the steps, and background facts. */
+  launch?: { steps: InfoSection[]; about: InfoSection[] };
+  /** Camera framing and floor height for this drone's size (defaults suit a ~3.5 m drone). */
+  view?: { camera: Vec3; target: Vec3; floorY: number; minFocusRadius: number };
+  /** Realistic models from Sketchfab, shown with Sketchfab's own player in the Realistic tab. */
+  sketchfab: SketchfabEmbed[];
 }
 
 export interface CatalogEntry {

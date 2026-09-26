@@ -12,6 +12,7 @@ export const shahed136: DroneDef = {
   id: 'shahed-136',
   name: 'Shahed-136',
   aka: 'Geran-2 (Russian-built version)',
+  maker: 'Shahed Aviation Industries, produced with HESA (Iran)',
   category: 'kamikaze',
   tagline: 'Long-range one-way attack drone ("kamikaze" drone)',
   overview:
@@ -26,7 +27,7 @@ export const shahed136: DroneDef = {
     { label: 'Wingspan', value: '≈ 2.5 m' },
     { label: 'Launch weight', value: '≈ 200 kg' },
     { label: 'Top speed', value: '≈ 185 km/h' },
-    { label: 'Engine', value: 'MD-550 piston engine, ≈ 50 hp' },
+    { label: 'Engine', value: 'MD-550, 548 cc piston engine, ≈ 50 hp' },
     { label: 'Fuel', value: '3 tanks: one in each wing + one in the body' },
     { label: 'Range', value: 'Claimed up to 2,500 km' },
     { label: 'Warhead', value: '≈ 50 kg (later versions up to ≈ 90 kg)' },
@@ -62,6 +63,64 @@ export const shahed136: DroneDef = {
         'many countries are now building cheap interceptor drones.',
     },
   ],
+  launch: {
+    steps: [
+      {
+        title: 'On the launch rack',
+        body:
+          'Up to five drones sit on rails in a rack on the back of a truck. The route and target are loaded, the ' +
+          'fuel tanks are full and the rocket booster is fitted under the body. The engine is reported to be started ' +
+          'before launch, so the propeller is already turning.',
+      },
+      {
+        title: 'The booster fires',
+        body:
+          'The solid-fuel rocket ignites and pushes the drone up the rail and into the air at a slight upward angle. ' +
+          'It fires for only a few seconds (reported as about 2–3 s).',
+      },
+      {
+        title: 'The booster drops away',
+        body: 'Once the drone is flying fast enough, the empty booster separates and falls to the ground.',
+      },
+      {
+        title: 'The engine takes over',
+        body:
+          'The piston engine and pusher propeller keep it flying. It climbs away and follows its pre-planned route ' +
+          'on its own.',
+      },
+    ],
+    about: [
+      {
+        title: 'The rocket booster',
+        body:
+          'A disposable solid rocket booster is fitted under the body. It is reported to fire for about 2–3 seconds ' +
+          'and is then dropped. Its exact size, mounting angle and materials have not been published.',
+      },
+      {
+        title: 'What is it made of?',
+        body:
+          'Not published for the Shahed\'s booster. Solid rocket boosters in general have three main parts: a strong ' +
+          'tube called the casing (usually metal or a composite), the solid propellant packed inside it (a mix of ' +
+          'fuel and oxidiser that burns without needing air), and a nozzle at the back that speeds up the hot gas to ' +
+          'push the rocket forward. Like a firework, once it is lit it burns until it runs out.',
+      },
+      {
+        title: 'Why use a booster?',
+        body:
+          'The drone has no wheels, and its propeller alone cannot get it to flying speed in the length of a short ' +
+          'rail. The booster gives a few seconds of strong push, so the drone can be launched from almost anywhere ' +
+          'a truck can go.',
+      },
+      {
+        title: 'The launch rack',
+        body:
+          'Truck-mounted racks are reported to hold five drones on rails, launched nearly horizontally at a slight ' +
+          'upward angle (the exact angle has not been published). Russia has also used single-drone launchers and ' +
+          'containers carried by trucks, trains or ships, and Iran has shown a launch from a moving car without a ' +
+          'booster.',
+      },
+    ],
+  },
   variants: {
     title: 'How the Russian Geran-2 differs',
     body:
@@ -80,11 +139,14 @@ export const shahed136: DroneDef = {
     { title: 'GlobalSecurity: Shahed-136 / Geran-2', url: 'https://www.globalsecurity.org/military/world/iran/shahed-136.htm' },
     { title: 'Military Factory: HESA Shahed-136', url: 'https://www.militaryfactory.com/aircraft/detail.php?aircraft_id=2520' },
     { title: 'Army Technology: Shahed-136', url: 'https://www.army-technology.com/projects/shahed-136-kamikaze-uav-iran/' },
+    { title: 'Militarnyi: Shahed launched from a vehicle', url: 'https://militarnyi.com/en/news/shahed-loitering-munition-received-the-capability-to-be-launched-from-a-vehicle/' },
+    { title: 'Militarnyi: How Russians launch Shahed drones', url: 'https://militarnyi.com/en/news/the-way-the-russians-launch-shahed-drones-was-revealed/' },
   ],
   parts: [
     // ── Airframe ───────────────────────────────────────────────
     {
       id: 'nose-cone',
+      guide: 'materials',
       madeOf: 'Fibreglass composite with a lightweight honeycomb filler (Russian-built Geran-2s examined in 2023 used fibreglass over woven carbon fibre instead)',
       name: 'Nose cone',
       system: 'airframe',
@@ -112,6 +174,7 @@ export const shahed136: DroneDef = {
     },
     {
       id: 'center-fuselage',
+      guide: 'materials',
       madeOf: 'Fibreglass composite with a lightweight honeycomb filler (Russian-built Geran-2s examined in 2023 used fibreglass over woven carbon fibre instead)',
       name: 'Center fuselage',
       system: 'airframe',
@@ -138,6 +201,7 @@ export const shahed136: DroneDef = {
     },
     {
       id: 'wing',
+      guide: 'materials',
       madeOf: 'Fibreglass with honeycomb filler; Russian-built versions reported with woven carbon fibre under the fibreglass',
       name: 'Delta wing',
       system: 'airframe',
@@ -172,6 +236,7 @@ export const shahed136: DroneDef = {
     // ── Propulsion ─────────────────────────────────────────────
     {
       id: 'engine',
+      guide: 'engines',
       name: 'Piston engine',
       system: 'propulsion',
       inside: true,
@@ -180,12 +245,15 @@ export const shahed136: DroneDef = {
       details:
         'It is reported to be the MD-550, an Iranian copy of the German Limbach L550E, an engine made for light ' +
         'aircraft and target drones. It makes about 50 horsepower, similar to a small motorbike, and it is the ' +
-        'reason the drone makes its loud buzzing sound. It is air-cooled, so it needs no radiator.',
+        'reason the drone makes its loud buzzing sound. It is air-cooled, so it needs no radiator. Russian-made ' +
+        'copies are reported to leave out the starter and flywheel and to wear out much sooner than the Iranian ' +
+        'engine. See the Engines guide for how it compares with other drone engines.',
       funFact: 'Its four cylinders lie flat, two on each side. This "boxer" layout is also used in Porsche and Subaru cars.',
       specs: [
         { label: 'Type', value: '4-cylinder, 2-stroke, air-cooled boxer' },
+        { label: 'Displacement', value: '548 cc (a "550 cc-class" engine)' },
         { label: 'Power', value: '≈ 37 kW (≈ 50 hp)' },
-        { label: 'Weight', value: '≈ 16 kg' },
+        { label: 'Weight', value: '≈ 16 kg dry (the L550E it copies)' },
       ],
       explode: [-0.3, 0, 0],
     },
@@ -227,14 +295,18 @@ export const shahed136: DroneDef = {
     },
     {
       id: 'booster',
+      guide: 'engines',
       name: 'Rocket launch booster',
       system: 'propulsion',
       evidence: 'reported',
-      summary: 'A small rocket under the body that throws the drone into the air at launch, then drops off.',
+      summary: 'A throwaway rocket under the body that throws the drone into the air at launch, then drops off.',
       details:
         'The drone has no landing gear and cannot take off from a runway. For launch, a disposable solid-fuel rocket ' +
-        'is fitted to its underside. It burns for only a few seconds, long enough to reach flying speed, then falls ' +
-        'away. Engineers call this RATO: Rocket-Assisted Take-Off.',
+        'is fitted to its underside. It fires for only a few seconds (reported as about 2–3 s), long enough to reach ' +
+        'flying speed, then falls away. Engineers call this RATO: Rocket-Assisted Take-Off. Watch it in the Launch tab.',
+      madeOf:
+        'Not published for the Shahed\'s booster. In general, a solid rocket booster is a strong tube (the casing, ' +
+        'usually metal or composite) packed with solid propellant, with a nozzle at the back',
       explode: [0.1, -0.75, 0],
     },
 
@@ -462,11 +534,20 @@ export const shahed136: DroneDef = {
     },
   ],
   model: { kind: 'procedural' },
-  sketchfab: {
-    modelId: 'e09fba235055433ba7bb7fb5a0d4da87',
-    title: 'HESA Shahed 136 3D CAD Model',
-    author: 'nitroexpress',
-    authorUrl: 'https://sketchfab.com/Bullet3D',
-    url: 'https://sketchfab.com/3d-models/hesa-shahed-136-3d-cad-model-e09fba235055433ba7bb7fb5a0d4da87',
-  },
+  sketchfab: [
+    {
+      modelId: 'e09fba235055433ba7bb7fb5a0d4da87',
+      title: 'HESA Shahed 136 3D CAD Model',
+      author: 'nitroexpress',
+      authorUrl: 'https://sketchfab.com/Bullet3D',
+      url: 'https://sketchfab.com/3d-models/hesa-shahed-136-3d-cad-model-e09fba235055433ba7bb7fb5a0d4da87',
+    },
+    {
+      modelId: 'bfc7a02b26814f51a265e57fcf2babc6',
+      title: 'Shahed 136',
+      author: 'harry',
+      authorUrl: 'https://sketchfab.com/hwerke',
+      url: 'https://sketchfab.com/3d-models/shahed-136-bfc7a02b26814f51a265e57fcf2babc6',
+    },
+  ],
 };

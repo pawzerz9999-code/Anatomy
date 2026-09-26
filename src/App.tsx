@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { CATEGORIES, DRONES } from './data/drones';
+import { hasLaunch, LaunchInfo, LaunchSteps, LaunchView } from './launch/LaunchView';
 import { useStore, type XrayMode } from './state/store';
 import { DroneLibrary } from './ui/DroneLibrary';
+import { GuidesModal } from './ui/GuidesModal';
 import { ChevronIcon, DroneIcon, LayersIcon } from './ui/icons';
 import { InfoPanel } from './ui/InfoPanel';
 import { PartsTree } from './ui/PartsTree';
@@ -31,7 +33,8 @@ function useKeyboardShortcuts() {
           s.resetView();
           break;
         case 'escape':
-          if (s.selectedId) s.select(null);
+          if (s.guide) s.openGuide(null);
+          else if (s.selectedId) s.select(null);
           else if (s.focusSystem) s.focus(null);
           break;
         default:
@@ -46,10 +49,13 @@ function useKeyboardShortcuts() {
 
 export default function App() {
   const droneId = useStore((s) => s.droneId);
-  const view = useStore((s) => s.view);
+  const requestedView = useStore((s) => s.view);
   const setView = useStore((s) => s.setView);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const drone = DRONES[droneId];
+  const launchable = hasLaunch(drone);
+  // Not every drone has a launch scene: fall back to the anatomy view.
+  const view = requestedView === 'launch' && !launchable ? 'anatomy' : requestedView;
   const category = CATEGORIES.find((c) => c.id === drone.category);
   useKeyboardShortcuts();
 
@@ -70,37 +76,46 @@ export default function App() {
           </span>
           <ChevronIcon />
         </button>
+        <button className="learn-btn" onClick={() => useStore.getState().openGuide('materials')}>
+          Learn
+        </button>
         <div className="tabs" role="tablist" aria-label="View">
           <button role="tab" aria-selected={view === 'anatomy'} onClick={() => setView('anatomy')}>
             Anatomy
           </button>
+          {launchable && (
+            <button role="tab" aria-selected={view === 'launch'} onClick={() => setView('launch')}>
+              Launch
+            </button>
+          )}
           <button role="tab" aria-selected={view === 'realistic'} onClick={() => setView('realistic')}>
             Realistic
           </button>
         </div>
       </header>
 
-      <aside className="panel parts-panel" aria-label="Parts">
-        <PartsTree drone={drone} />
+      <aside className="panel parts-panel" aria-label={view === 'launch' ? 'Launch steps' : 'Parts'}>
+        {view === 'launch' ? <LaunchSteps drone={drone} /> : <PartsTree drone={drone} />}
       </aside>
 
       <main className="stage">
-        {view === 'anatomy' ? (
+        {view === 'anatomy' && (
           <>
             <Viewer />
             <FocusBanner />
             <Toolbar />
           </>
-        ) : (
-          <RealisticView drone={drone} />
         )}
+        {view === 'launch' && <LaunchView key={drone.id} drone={drone} />}
+        {view === 'realistic' && <RealisticView key={drone.id} drone={drone} />}
       </main>
 
       <aside className="panel info-panel" aria-label="Information">
-        <InfoPanel drone={drone} />
+        {view === 'launch' ? <LaunchInfo drone={drone} /> : <InfoPanel drone={drone} />}
       </aside>
 
       {libraryOpen && <DroneLibrary onClose={() => setLibraryOpen(false)} />}
+      <GuidesModal />
     </div>
   );
 }

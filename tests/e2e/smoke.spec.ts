@@ -110,19 +110,82 @@ test('library lists kamikaze and interceptor drones', async ({ page }) => {
   const dialog = page.getByRole('dialog', { name: 'Drone library' });
   await expect(dialog).toBeVisible();
   await dialog.getByRole('tab', { name: 'Interceptors' }).click();
-  await expect(dialog.locator('.card')).toHaveCount(3);
+  await expect(dialog.locator('.card')).toHaveCount(5);
+  await expect(dialog.locator('.card:not(:disabled)')).toHaveCount(3);
   await dialog.getByRole('tab', { name: 'All' }).click();
   await page.screenshot({ path: `${SHOTS}/07-library.png` });
   await dialog.getByRole('button', { name: 'Close library' }).click();
   await expect(dialog).toBeHidden();
 });
 
-test('realistic tab embeds the Sketchfab model with credit', async ({ page }) => {
+test('realistic tab embeds both Sketchfab models with credit', async ({ page }) => {
   await open(page);
   await page.getByRole('tab', { name: 'Realistic' }).click();
   const frame = page.locator('.realistic iframe');
   await expect(frame).toHaveAttribute('src', /sketchfab\.com\/models\/e09fba235055433ba7bb7fb5a0d4da87\/embed/);
   await expect(page.locator('.realistic .credit')).toContainText('nitroexpress');
+  await page.locator('.model-switch').getByRole('tab', { name: /by harry/ }).click();
+  await expect(frame).toHaveAttribute('src', /bfc7a02b26814f51a265e57fcf2babc6/);
+  await expect(page.locator('.realistic .credit')).toContainText('harry');
+});
+
+test('launch tab: booster fires, drops away and the engine takes over', async ({ page }) => {
+  const errors = await open(page);
+  await page.getByRole('tab', { name: 'Launch' }).click();
+  await page.waitForFunction(() => document.body.dataset.launchReady === 'true');
+  await expect(page.locator('.launch-caption')).toContainText('On the launch rack');
+  await expect(page.locator('.info')).toContainText('What is it made of?');
+  await page.waitForTimeout(1000);
+  await page.screenshot({ path: `${SHOTS}/09-launch-rack.png` });
+  await page.getByRole('button', { name: '▶ Launch' }).click();
+  for (const [phase, text] of [
+    [1, 'The booster fires'],
+    [2, 'The booster drops away'],
+    [3, 'The engine takes over'],
+  ] as const) {
+    await page.waitForFunction(
+      (p) => (window as unknown as { droneAnatomy: { useStore: Store } }).droneAnatomy.useStore.getState().launchPhase === p,
+      phase,
+      { timeout: 60_000 },
+    );
+    await expect(page.locator('.launch-caption')).toContainText(text);
+    if (phase === 1) {
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: `${SHOTS}/10-launch-boost.png` });
+    }
+  }
+  await page.getByRole('button', { name: /Back to the rack/ }).click();
+  await expect(page.locator('.launch-caption')).toContainText('On the launch rack');
+  expect(errors).toEqual([]);
+});
+
+test('interceptors load with every part', async ({ page }) => {
+  const errors = await open(page);
+  for (const name of ['Sting', 'Strila', 'P1-SUN']) {
+    await page.locator('.drone-picker').click();
+    await page.getByRole('dialog', { name: 'Drone library' }).getByRole('button', { name: new RegExp(`^Interceptors ${name}`) }).click();
+    await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+    const parts = await page.locator('.parts-tree li').count();
+    await page.waitForFunction(
+      (n) => (window as unknown as { droneAnatomy: { partRegistry: Map<string, unknown> } }).droneAnatomy.partRegistry.size === n,
+      parts,
+    );
+  }
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${SHOTS}/11-p1-sun.png` });
+  expect(errors).toEqual([]);
+});
+
+test('learn guides explain materials, radar and engines', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Learn' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Airframe materials & radar' });
+  await expect(dialog).toContainText('Is a carbon-fibre drone invisible to radar?');
+  await dialog.getByRole('tab', { name: 'Engines & propulsion' }).click();
+  await expect(page.getByRole('dialog', { name: 'Engines & propulsion' })).toContainText('548 cc');
+  await page.screenshot({ path: `${SHOTS}/12-guide-engines.png` });
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeHidden();
 });
 
 test('phone layout @mobile', async ({ page }) => {

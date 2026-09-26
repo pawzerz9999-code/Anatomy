@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { DRONES } from '../data/drones';
-import type { SystemId } from '../types';
+import type { GuideId, SystemId } from '../types';
 
 export type XrayMode = 'off' | 'lens' | 'full';
-export type ViewMode = 'anatomy' | 'realistic';
+export type ViewMode = 'anatomy' | 'launch' | 'realistic';
 
 export type CameraCommand =
   | { kind: 'reset'; nonce: number }
@@ -29,8 +29,15 @@ interface ViewerState {
   spinProp: boolean;
   search: string;
   camera: CameraCommand;
+  /** The open Learn guide, if any. */
+  guide: GuideId | null;
+  /** Current step of the launch sequence (0 = on the rack). */
+  launchPhase: number;
 
+  setLaunchPhase: (p: number) => void;
+  openGuide: (id: GuideId | null) => void;
   setView: (view: ViewMode) => void;
+  setDrone: (id: string) => void;
   select: (id: string | null, flyTo?: boolean) => void;
   hover: (id: string | null) => void;
   togglePart: (id: string) => void;
@@ -67,8 +74,25 @@ export const useStore = create<ViewerState>((set, get) => ({
   spinProp: true,
   search: '',
   camera: { kind: 'reset', nonce: nonce++ },
+  guide: null,
+  launchPhase: 0,
 
+  setLaunchPhase: (launchPhase) => set({ launchPhase }),
+  openGuide: (guide) => set({ guide }),
   setView: (view) => set({ view }),
+  setDrone: (droneId) =>
+    set({
+      droneId,
+      selectedId: null,
+      hoveredId: null,
+      hiddenParts: {},
+      hiddenSystems: {},
+      isolatedId: null,
+      focusSystem: null,
+      explode: 0,
+      search: '',
+      camera: { kind: 'reset', nonce: nonce++ },
+    }),
   select: (id, flyTo = true) =>
     set((s) => {
       const part = id ? DRONES[s.droneId]?.parts.find((p) => p.id === id) : undefined;

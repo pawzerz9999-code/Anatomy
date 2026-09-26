@@ -32,6 +32,12 @@ export const SYSTEMS: SystemDef[] = [
     description: 'Works out where the drone is: satellite navigation plus motion sensors.',
   },
   {
+    id: 'sensors',
+    name: 'Cameras & radio',
+    color: '#f472b6',
+    description: 'How the pilot sees and controls the drone: cameras, the video transmitter and the radio receiver.',
+  },
+  {
     id: 'power',
     name: 'Electrical power',
     color: '#a78bfa',

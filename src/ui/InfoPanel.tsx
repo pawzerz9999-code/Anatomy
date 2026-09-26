@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { CATEGORIES } from '../data/drones';
+import { GUIDE_BY_ID } from '../data/guides';
 import { SYSTEM_BY_ID, SYSTEMS } from '../data/systems';
 import { useStore } from '../state/store';
 import type { DroneDef, PartDef, Spec } from '../types';
@@ -59,6 +60,11 @@ function PartInfo({ drone, part }: { drone: DroneDef; part: PartDef }) {
           <strong>Made of:</strong> {part.madeOf}
         </p>
       )}
+      {part.guide && (
+        <button className="guide-link" onClick={() => useStore.getState().openGuide(part.guide!)}>
+          Learn more: {GUIDE_BY_ID[part.guide].title} →
+        </button>
+      )}
       {part.funFact && (
         <aside className="fun-fact">
           <strong>Did you know?</strong> {part.funFact}
@@ -89,6 +95,7 @@ function DroneOverview({ drone }: { drone: DroneDef }) {
       {category && <span className="category">{category.name}</span>}
       <h2>{drone.name}</h2>
       {drone.aka && <p className="aka">Also known as {drone.aka}</p>}
+      {drone.maker && <p className="aka">Made by {drone.maker}</p>}
       <p className="lead">{drone.tagline}</p>
       <p>{drone.overview}</p>
       <h3>Key facts</h3>

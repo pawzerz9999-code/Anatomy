@@ -8,6 +8,7 @@ import { CloseIcon } from './icons';
 export function DroneLibrary({ onClose }: { onClose: () => void }) {
   const [filter, setFilter] = useState<DroneCategory | 'all'>('all');
   const droneId = useStore((s) => s.droneId);
+  const setDrone = useStore((s) => s.setDrone);
   const entries = CATALOG.filter((d) => filter === 'all' || d.category === filter);
 
   return (
@@ -39,7 +40,9 @@ export function DroneLibrary({ onClose }: { onClose: () => void }) {
                   className={`card${d.id === droneId ? ' current' : ''}`}
                   disabled={!live}
                   onClick={() => {
-                    if (live) onClose();
+                    if (!live) return;
+                    if (d.id !== droneId) setDrone(d.id);
+                    onClose();
                   }}
                 >
                   <span className="card-cat">{cat.name}</span>
