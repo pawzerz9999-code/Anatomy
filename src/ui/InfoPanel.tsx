@@ -47,8 +47,18 @@ function PartInfo({ drone, part }: { drone: DroneDef; part: PartDef }) {
         <span className="dot" /> {sys.name}
       </button>
       <h2>{part.name}</h2>
+      <p className={`evidence ${part.evidence}`}>
+        {part.evidence === 'reported'
+          ? 'Publicly documented part'
+          : 'Typical part: the exact design has not been published, so this shows a typical example'}
+      </p>
       <p className="lead">{part.summary}</p>
       <p>{part.details}</p>
+      {part.madeOf && (
+        <p className="made-of">
+          <strong>Made of:</strong> {part.madeOf}
+        </p>
+      )}
       {part.funFact && (
         <aside className="fun-fact">
           <strong>Did you know?</strong> {part.funFact}
@@ -98,12 +108,25 @@ function DroneOverview({ drone }: { drone: DroneDef }) {
           </li>
         ))}
       </ul>
-      {drone.sections.map((sec) => (
+      {[...drone.sections, ...(drone.variants ? [drone.variants] : [])].map((sec) => (
         <details key={sec.title}>
           <summary>{sec.title}</summary>
           <p>{sec.body}</p>
         </details>
       ))}
+      <h3>Sources</h3>
+      <ul className="sources">
+        {drone.sources.map((src) => (
+          <li key={src.url}>
+            <a href={src.url} target="_blank" rel="noopener noreferrer">
+              {src.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className="note">
+        Parts are marked as publicly documented, or as a typical example where the exact design has not been published.
+      </p>
       <aside className="how-to">
         <h3>How to explore</h3>
         <ul>

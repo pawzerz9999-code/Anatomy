@@ -22,6 +22,12 @@ describe.each(Object.values(DRONES))('$name data', (drone) => {
     }
   });
 
+  it('marks how well every part is documented, and cites sources', () => {
+    for (const p of drone.parts) expect(['reported', 'typical'], p.id).toContain(p.evidence);
+    expect(drone.sources.length).toBeGreaterThan(2);
+    for (const src of drone.sources) expect(src.url, src.title).toMatch(/^https:\/\//);
+  });
+
   it('has a known category and overview content', () => {
     expect(categoryIds.has(drone.category)).toBe(true);
     expect(drone.overview.length).toBeGreaterThan(100);
@@ -36,9 +42,14 @@ describe.each(Object.values(DRONES))('$name data', (drone) => {
 describe('Shahed-136', () => {
   const drone = DRONES['shahed-136'];
 
-  it('has a dedicated fuel system layer', () => {
+  it('has the reported three-tank fuel system: both wings plus the body', () => {
     const fuel = drone.parts.filter((p) => p.system === 'fuel').map((p) => p.id);
-    expect(fuel).toEqual(expect.arrayContaining(['fuel-tank', 'fuel-lines', 'fuel-pump', 'fuel-filter']));
+    expect(fuel).toEqual(expect.arrayContaining(['wing-tanks', 'fuel-tank', 'fuel-lines', 'fuel-pump', 'fuel-filter']));
+  });
+
+  it('has the reported control surfaces: two elevons and two rudders', () => {
+    const ids = drone.parts.filter((p) => p.system === 'flight-control').map((p) => p.id);
+    expect(ids).toEqual(expect.arrayContaining(['elevons', 'rudders', 'servos']));
   });
 
   it('uses exactly the part ids that its 3D model renders', () => {

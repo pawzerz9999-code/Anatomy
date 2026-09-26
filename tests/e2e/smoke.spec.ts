@@ -39,8 +39,9 @@ test('renders the Shahed-136 with no errors', async ({ page }) => {
 
 test('clicking a part in the tree shows its info and reveals it with X-ray', async ({ page }) => {
   const errors = await open(page);
-  await page.getByRole('button', { name: 'Fuel tank', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Fuel tank' })).toBeVisible();
+  await page.getByRole('button', { name: 'Body fuel tank', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Body fuel tank' })).toBeVisible();
+  await expect(page.locator('.part-info .evidence')).toHaveText(/Publicly documented/);
   await expect(page.locator('.part-info .system-chip')).toHaveText(/Fuel system/);
   // The tank is inside the shell, so X-ray switches on by itself.
   expect(await getState(page, 'xray')).toBe('full');
@@ -94,7 +95,8 @@ test('labels name every part', async ({ page }) => {
   await open(page);
   await page.getByRole('button', { name: 'Labels' }).click();
   const callouts = page.locator('.callout');
-  await expect(callouts).toHaveCount(23);
+  // One callout per part in the parts tree.
+  await expect(callouts).toHaveCount(await page.locator('.parts-tree li').count());
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `${SHOTS}/06-labels.png` });
   // Hiding a part hides its label.

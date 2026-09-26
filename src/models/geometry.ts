@@ -1,4 +1,4 @@
-import { BoxGeometry, ExtrudeGeometry, LatheGeometry, Shape, Vector2 } from 'three';
+import { BoxGeometry, BufferGeometry, ExtrudeGeometry, LatheGeometry, Shape, Vector2 } from 'three';
 
 /**
  * Small helpers for building aircraft shapes from code.
@@ -91,6 +91,17 @@ export function propBlade({ root = 0.05, tip = 0.4, chord = 0.075, thickness = 0
     const xt = x * (1 - 0.3 * t);
     pos.setXYZ(i, xt * Math.cos(twist) - zt * Math.sin(twist), yLocal + root, xt * Math.sin(twist) + zt * Math.cos(twist));
   }
+  g.computeVertexNormals();
+  return g;
+}
+
+/**
+ * Scale a geometry's thickness (Y) by a function of its spanwise position (|Z|),
+ * e.g. to make a wing thick at the root and thin at the tip.
+ */
+export function taperThickness<T extends BufferGeometry>(g: T, scaleAt: (absZ: number) => number): T {
+  const pos = g.attributes.position;
+  for (let i = 0; i < pos.count; i++) pos.setY(i, pos.getY(i) * scaleAt(Math.abs(pos.getZ(i))));
   g.computeVertexNormals();
   return g;
 }

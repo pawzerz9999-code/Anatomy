@@ -658,6 +658,44 @@ summary {
   margin-top: 5px;
 }
 
+/* Evidence badge + materials + sources */
+.info .evidence {
+  display: inline-block;
+  margin: 2px 0 6px;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.info .evidence.reported {
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.1);
+}
+.info .evidence.reported::before {
+  content: '✓ ';
+}
+.info .evidence.typical {
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.1);
+}
+.info .made-of {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  font-size: 13px;
+}
+.sources {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+}
+.sources li + li {
+  margin-top: 4px;
+}
+.sources a {
+  color: var(--accent-2);
+}
+
 /* ── Realistic view ─────────────────────────────────────── */
 .realistic {
   position: absolute;

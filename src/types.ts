@@ -30,6 +30,15 @@ export interface PartDef {
   skin?: boolean;
   /** Sits inside the shell. Selecting it turns X-ray on so it can be seen. */
   inside?: boolean;
+  /**
+   * How sure we are about this part:
+   * - `reported`: its existence and rough location are described in public reporting or teardowns.
+   * - `typical`: the drone must have one, but its exact design and position are not public,
+   *   so the model shows a typical example.
+   */
+  evidence: 'reported' | 'typical';
+  /** What it is made of, where that has been reported. */
+  madeOf?: string;
   /** One plain-language line: what is it? */
   summary: string;
   /** A short paragraph: what does it do and why is it built that way? */
@@ -43,6 +52,11 @@ export interface PartDef {
 export interface InfoSection {
   title: string;
   body: string;
+}
+
+export interface SourceLink {
+  title: string;
+  url: string;
 }
 
 export type DroneCategory =
@@ -72,6 +86,10 @@ export interface DroneDef {
   overview: string;
   specs: Spec[];
   sections: InfoSection[];
+  /** How later or foreign-built versions differ from the one modelled. */
+  variants?: InfoSection;
+  /** Public sources the model and text are based on. */
+  sources: SourceLink[];
   parts: PartDef[];
   /** The 3D model: built in code now; a glTF file with a mesh-name → part-id map later. */
   model: { kind: 'procedural' } | { kind: 'gltf'; url: string; nodeMap: Record<string, string> };

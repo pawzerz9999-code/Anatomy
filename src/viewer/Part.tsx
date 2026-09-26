@@ -9,6 +9,20 @@ import { patchSkinMaterial } from './xray';
 
 export const DroneContext = createContext<DroneDef | null>(null);
 
+/**
+ * How a model is being shown. The anatomy viewer is interactive (picking, X-ray,
+ * explode, highlights). Other scenes, like the launch, show the model as-is.
+ */
+export interface ModelMode {
+  interactive: boolean;
+  /** Part ids not to draw (e.g. the booster, when the launch scene animates it separately). */
+  hidden?: ReadonlySet<string>;
+  /** Propeller speed override in rad/s; otherwise the "Propeller" toggle decides. */
+  propSpeed?: () => number;
+}
+
+export const ModelModeContext = createContext<ModelMode>({ interactive: true });
+
 export function useDrone(): DroneDef {
   const drone = useContext(DroneContext);
   if (!drone) throw new Error('useDrone must be used inside <DroneContext.Provider>');
@@ -35,6 +49,7 @@ const RENDER_ORDER_SKIN = 10;
  */
 export function Part({ id, children }: { id: string; children: ReactNode }) {
   const drone = useDrone();
+  const mode = useContext(ModelModeContext);
   const def = useMemo(() => drone.parts.find((p) => p.id === id), [drone, id]);
   if (!def) console.error(`[Part] No part data for id "${id}" in drone "${drone.id}"`);
 
@@ -47,6 +62,10 @@ export function Part({ id, children }: { id: string; children: ReactNode }) {
   useLayoutEffect(() => {
     const g = group.current;
     if (!g || !def) return;
+    if (!mode.interactive) {
+      g.visible = !mode.hidden?.has(id);
+      return;
+    }
     meshes.current = [];
     mats.current = [];
     g.traverse((o) => {
@@ -73,11 +92,11 @@ export function Part({ id, children }: { id: string; children: ReactNode }) {
     return () => {
       partRegistry.delete(id);
     };
-  }, [id, def]);
+  }, [id, def, mode]);
 
   useFrame((state, dt) => {
     const g = group.current;
-    if (!g || !def) return;
+    if (!g || !def || !mode.interactive) return;
     const s = useStore.getState();
 
     // Explode: slide the part along its explode vector.
@@ -133,6 +152,13 @@ export function Part({ id, children }: { id: string; children: ReactNode }) {
     useStore.getState().select(id);
   };
 
+  if (!mode.interactive) {
+    return (
+      <group ref={group} name={`part:${id}`}>
+        {children}
+      </group>
+    );
+  }
   return (
     <group ref={group} name={`part:${id}`} onPointerOver={onOver} onPointerOut={onOut} onClick={onClick}>
       {children}
@@ -157,12 +183,13 @@ function isInsideLens(id: string, g: Group, camera: Camera, size: { width: numbe
  */
 export function ExplodeGroup({ offset, children, ...rest }: { offset: Vec3; children: ReactNode } & ThreeElements['group']) {
   const ref = useRef<Group>(null);
+  const mode = useContext(ModelModeContext);
   const base = useMemo(() => {
     const p = rest.position;
     return Array.isArray(p) ? new Vector3(p[0], p[1], p[2]) : new Vector3();
   }, [rest.position]);
   useFrame(() => {
-    const e = runtime.explode;
+    const e = mode.interactive ? runtime.explode : 0;
     ref.current?.position.set(base.x + offset[0] * e, base.y + offset[1] * e, base.z + offset[2] * e);
   });
   return (
