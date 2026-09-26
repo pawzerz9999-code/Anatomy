@@ -92,6 +92,14 @@ kbd {
   overflow: hidden;
 }
 
+/* The Factory tab has no parts list, so the stage takes its column. */
+.app.wide-stage {
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-areas:
+    'top top'
+    'stage info';
+}
+
 .topbar {
   grid-area: top;
   display: flex;
@@ -724,6 +732,268 @@ summary {
   color: var(--muted);
 }
 
+/* ── Factory ────────────────────────────────────────────── */
+.factory {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+.factory canvas {
+  display: block;
+}
+.station-card,
+.built-card {
+  position: absolute;
+  top: 14px;
+  padding: 10px 14px 12px;
+  border-radius: 12px;
+  background: rgba(13, 19, 27, 0.86);
+  border: 1px solid var(--line-2);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.station-card {
+  left: 14px;
+  width: min(340px, calc(100% - 190px));
+}
+.station-card .kicker,
+.built-card > span {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+.station-title {
+  display: block;
+  margin-top: 2px;
+  font-size: 20px;
+  line-height: 1.2;
+}
+.station-card p {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: #c5d0dc;
+}
+.fitting {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--text);
+}
+.fitting li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.built-card {
+  right: 14px;
+  text-align: right;
+}
+.built-card strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 600;
+}
+.factory-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px 16px;
+  width: min(760px, calc(100% - 24px));
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(13, 19, 27, 0.88);
+  border: 1px solid var(--line-2);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.factory-controls .group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.factory-controls .play {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #04121c;
+}
+.line-progress {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.line-progress li {
+  flex-basis: 0;
+  min-width: 6px;
+}
+.line-progress button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 22px;
+  padding: 0;
+}
+.line-progress button::before,
+.line-progress .fill {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  height: 6px;
+  border-radius: 3px;
+}
+.line-progress button::before {
+  right: 0;
+  background: var(--line-2);
+}
+.line-progress .fill {
+  width: 0;
+  background: var(--accent);
+}
+.line-progress button:hover::before,
+.line-progress button.current::before {
+  background: #3a4d63;
+}
+
+/* Factory info panel */
+.category.factory-tag {
+  color: var(--accent);
+  background: rgba(94, 234, 212, 0.1);
+}
+.station-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.station-list > li {
+  border-radius: 10px;
+  padding: 2px 0 4px;
+}
+.station-list > li.current {
+  background: var(--panel-2);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.station-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  width: 100%;
+  padding: 6px 8px 2px;
+  text-align: left;
+}
+.station-head .num {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  transform: translateY(-1px);
+}
+.station-list li.done .num {
+  border-color: transparent;
+  background: var(--line-2);
+  color: var(--text);
+}
+.station-list li.current .num {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #04121c;
+}
+.station-head strong {
+  display: block;
+}
+.station-head small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.station-list > li:not(.current) .station-head small {
+  display: none;
+}
+.part-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 2px;
+  padding: 0 8px 0 38px;
+  list-style: none;
+}
+.part-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  font-size: 12px;
+  color: var(--muted);
+}
+.part-chips button:hover,
+.part-chips button.active {
+  color: var(--text);
+  border-color: var(--sys);
+}
+.part-chips .dot {
+  width: 7px;
+  height: 7px;
+}
+.info .not-fitted {
+  margin-top: 10px;
+}
+.stat-tiles {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 8px;
+}
+.stat {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--panel-2);
+}
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.stat-label {
+  display: block;
+  font-weight: 600;
+}
+.stat small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 /* ── Library ────────────────────────────────────────────── */
 .modal-backdrop {
   position: fixed;
@@ -877,5 +1147,38 @@ summary {
   .callout {
     font-size: 10px;
     padding: 3px 6px;
+  }
+  .station-card,
+  .built-card {
+    top: 8px;
+    padding: 7px 10px 8px;
+  }
+  .station-card {
+    left: 8px;
+    width: calc(100% - 110px);
+  }
+  .built-card {
+    right: 8px;
+  }
+  .built-card .long {
+    display: none;
+  }
+  .station-card p,
+  .fitting {
+    display: none;
+  }
+  .station-title {
+    font-size: 16px;
+  }
+  .built-card strong {
+    font-size: 22px;
+  }
+  .factory-controls {
+    bottom: 8px;
+    gap: 6px 10px;
+    padding: 6px 8px;
+  }
+  .factory-controls .group-label {
+    display: none;
   }
 }

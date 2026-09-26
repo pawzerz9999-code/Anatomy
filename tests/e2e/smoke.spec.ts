@@ -125,6 +125,57 @@ test('realistic tab embeds the Sketchfab model with credit', async ({ page }) =>
   await expect(page.locator('.realistic .credit')).toContainText('nitroexpress');
 });
 
+type Factory = { getState: () => { seek: (t: number) => void; setPlaying: (on: boolean) => void } };
+
+/** Pause the factory line at a moment in the build, for a repeatable screenshot. */
+function holdFactoryAt(page: Page, time: number) {
+  return page.evaluate((t) => {
+    const f = (window as unknown as { droneAnatomy: { useFactory: Factory } }).droneAnatomy.useFactory.getState();
+    f.setPlaying(false);
+    f.seek(t);
+  }, time);
+}
+
+async function openFactory(page: Page) {
+  await page.getByRole('tab', { name: 'Factory' }).click();
+  await page.waitForFunction(() => document.body.dataset.factoryReady === 'true');
+}
+
+test('factory tab builds the drone station by station', async ({ page }) => {
+  const errors = await open(page);
+  await openFactory(page);
+  await expect(page.locator('.station-card .kicker')).toHaveText('Station 1 of 8');
+  // The parts list makes way for a wider stage.
+  await expect(page.locator('.parts-panel')).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Go to station 6: Body shell' }).click();
+  await expect(page.locator('.station-title')).toHaveText('Body shell');
+  await expect(page.locator('.station-list li.current')).toContainText('Body shell');
+  await expect(page.locator('.station-card .fitting')).toContainText('Nose cone');
+
+  // Mid-station, with the body sections sliding on over the parts inside.
+  await holdFactoryAt(page, 7.6);
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `${SHOTS}/09-factory.png` });
+
+  // At 4×, the drone leaves the line and the counter goes up.
+  await page.getByRole('radio', { name: '4×' }).click();
+  await page.getByRole('button', { name: 'Go to: Off the line' }).click();
+  await page.getByRole('button', { name: 'Play' }).click();
+  await expect(page.getByTestId('built-count')).toHaveText('1');
+  expect(errors).toEqual([]);
+});
+
+test('factory final check @mobile', async ({ page }) => {
+  const errors = await open(page);
+  await openFactory(page);
+  await holdFactoryAt(page, 12.4);
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `${SHOTS}/10-factory-mobile.png` });
+  expect(errors).toEqual([]);
+});
+
 test('phone layout @mobile', async ({ page }) => {
   const errors = await open(page);
   await expect(page.locator('.viewer canvas')).toBeVisible();

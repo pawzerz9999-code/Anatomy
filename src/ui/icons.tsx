@@ -48,3 +48,13 @@ export const DroneIcon = () => (
     <circle cx="32" cy="52" r="3" fill="currentColor" />
   </svg>
 );
+export const PlayIcon = () => (
+  <svg {...base} aria-hidden>
+    <path d="M7 4.5v15l12-7.5-12-7.5Z" fill="currentColor" />
+  </svg>
+);
+export const PauseIcon = () => (
+  <svg {...base} aria-hidden>
+    <path d="M8 5v14M16 5v14" strokeWidth={3} />
+  </svg>
+);

@@ -11,6 +11,10 @@ The first drone is the **Shahed-136**, a long-range one-way attack ("kamikaze") 
 | --- | --- | --- |
 | ![Hover lens](docs/hover-lens.png) | ![Fuel system](docs/fuel-xray.png) | ![Labels](docs/labels.png) |
 
+### Factory: watch it being built
+
+![Factory view: the body sections slide on over the parts inside](docs/factory.png)
+
 ## Features
 
 - **360° viewer**: drag to rotate, scroll or pinch to zoom, right-drag to pan. The turntable spins it on its own.
@@ -22,9 +26,13 @@ The first drone is the **Shahed-136**, a long-range one-way attack ("kamikaze") 
 - **Labels**: callouts name every part at once, and hovering a label highlights its part.
 - **Explode**: the shell lifts away to show the internals in place.
 - **Layers**: show, hide or isolate any part or whole system (airframe, propulsion, fuel, flight control, navigation, power, payload).
+- **Factory tab**: a time-lapse assembly line. The drone is built station by station (wing, fuel system, engine, electronics, payload, body shell, fins and controls, propeller). An overhead crane lowers each part, which glows in its system colour as it clicks into place. After a final scan it moves down the line to join the finished drones, and the next one starts.
+  - Play / pause (`Space`), 1×, 2× or 4× speed, and jump to any station from the progress line or the station list.
+  - Click a part in the station list to watch it go in.
+  - How fast the real factories work: publicly reported production estimates, with sources. The build order is simplified for teaching and is not the real factory's process.
 - **Realistic tab**: the detailed [Sketchfab model](https://sketchfab.com/3d-models/hesa-shahed-136-3d-cad-model-e09fba235055433ba7bb7fb5a0d4da87) by nitroexpress, embedded with Sketchfab's player.
 - **Library**: every drone category (kamikaze, interceptors, multirotor, fixed-wing, VTOL, helicopter, nano, utility).
-- Works on phones, tablets and desktops. Keyboard shortcuts: `X` X-ray · `E` explode · `L` labels · `R` reset · `Esc` deselect.
+- Works on phones, tablets and desktops. Keyboard shortcuts: `X` X-ray · `E` explode · `L` labels · `R` reset · `Esc` deselect (Anatomy tab), `Space` play / pause (Factory tab).
 
 ## Run it
 
@@ -52,6 +60,7 @@ React + TypeScript + [three.js](https://threejs.org) via [react-three-fiber](htt
 ```
 src/
   data/drones/shahed136.ts      what each part is: text, specs, system, explode direction
+  data/drones/shahed136Assembly.ts  factory stations, how each part comes in, production facts
   data/drones/index.ts          drone registry + library catalog
   data/systems.ts               the 7 colour-coded systems
   models/shahed136/…Model.tsx   the 3D model, built from code; one <Part id> per part
@@ -61,7 +70,10 @@ src/
   viewer/FlowLine.tsx           pipes with animated flow (fuel lines)
   viewer/Labels.tsx             hover name tag + callout columns
   viewer/CameraRig.tsx          orbit controls, fly-to, turntable
-  ui/                           parts tree, info panel, toolbar, library, realistic tab
+  factory/timeline.ts           the time-lapse as a pure function of time (stations, part motion)
+  factory/FactoryScene.tsx      factory floor, crane, conveyor, finished drones, final-check scan
+  factory/FactoryView.tsx       the Factory tab: canvas plus play / speed / station controls
+  ui/                           parts tree, info panel, factory panel, toolbar, library, realistic tab
 ```
 
 The 3D model is **built from code** (no model files), so every part is its own clickable piece and the app has no licensing issues. The data layer also supports glTF models (`model: { kind: 'gltf', url, nodeMap }`), so a detailed Blender or purchased model can replace the code-built one later.
@@ -71,10 +83,11 @@ The 3D model is **built from code** (no model files), so every part is its own c
 1. Add `src/data/drones/<id>.ts` with its parts, and register it in `src/data/drones/index.ts` (set its catalog entry to `live`).
 2. Add `src/models/<id>/<Name>Model.tsx`, wrapping each part's meshes in `<Part id="…">`, and register it in `src/models/index.ts`.
 3. `npm test` checks that the model and the data use exactly the same part ids.
+4. Optional: add an `assembly` (stations, approach offsets, facts) to give it a Factory tab. `npm test` checks that every part is fitted exactly once.
 
 ## Content guideline
 
-This is an educational app for students and the general public. Military drones are described at **encyclopedia / museum-exhibit level**: what each part is and does, approximate figures that have been publicly reported (marked as such), history, and how the drones are countered. It doesn't include warhead or fuze internals, construction or sourcing details, or anything about modifying guidance or payloads.
+This is an educational app for students and the general public. Military drones are described at **encyclopedia / museum-exhibit level**: what each part is and does, approximate figures that have been publicly reported (marked as such), history, and how the drones are countered. It doesn't include warhead or fuze internals, construction or sourcing details, or anything about modifying guidance or payloads. The Factory tab shows the same parts coming together in a simplified teaching order, not a real production process.
 
 ## Roadmap
 

@@ -3,7 +3,7 @@ import { DRONES } from '../data/drones';
 import type { SystemId } from '../types';
 
 export type XrayMode = 'off' | 'lens' | 'full';
-export type ViewMode = 'anatomy' | 'realistic';
+export type ViewMode = 'anatomy' | 'factory' | 'realistic';
 
 export type CameraCommand =
   | { kind: 'reset'; nonce: number }

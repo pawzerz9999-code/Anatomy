@@ -77,6 +77,46 @@ export interface SketchfabEmbed {
   url: string;
 }
 
+/** One station on the factory line: the parts fitted there, in order. */
+export interface AssemblyStation {
+  title: string;
+  /** One or two plain-language sentences about what goes on here. */
+  body: string;
+  parts: string[];
+}
+
+export interface Stat {
+  label: string;
+  value: string;
+  /** Where the figure comes from, or how it was worked out. */
+  note: string;
+}
+
+/**
+ * The factory view: the drone built station by station, sped up like a time-lapse.
+ * The order is simplified for teaching: it shows how the parts fit together, not a
+ * real factory's process.
+ */
+export interface AssemblyDef {
+  stations: AssemblyStation[];
+  /**
+   * Where a part comes from before it is fitted, as an offset from its fitted place
+   * (metres). It is lowered from above, then slides in along this offset. Parts not
+   * listed are lowered straight down.
+   */
+  approach?: Record<string, Vec3>;
+  /** What happens once every part is on: the final check, then leaving the line. */
+  check: string;
+  rollout: string;
+  /** Parts that are not fitted at the factory, with the reason. */
+  notFitted?: { id: string; note: string }[];
+  /** Headline figures about how fast it is made. */
+  stats: Stat[];
+  /** Publicly reported facts about where and how it is made. */
+  facts: InfoSection[];
+  sources: SourceLink[];
+}
+
 export interface DroneDef {
   id: string;
   name: string;
@@ -94,6 +134,8 @@ export interface DroneDef {
   /** The 3D model: built in code now; a glTF file with a mesh-name → part-id map later. */
   model: { kind: 'procedural' } | { kind: 'gltf'; url: string; nodeMap: Record<string, string> };
   sketchfab?: SketchfabEmbed;
+  /** The factory view, where there is one. */
+  assembly?: AssemblyDef;
 }
 
 export interface CatalogEntry {

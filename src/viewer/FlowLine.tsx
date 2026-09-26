@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useContext, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import {
   AdditiveBlending,
@@ -13,7 +13,7 @@ import {
 import { useStore } from '../state/store';
 import type { SystemId, Vec3 } from '../types';
 import { damp } from './runtime';
-import { useDrone } from './Part';
+import { ModelModeContext, useDrone } from './Part';
 
 function makeDashTexture() {
   const c = document.createElement('canvas');
@@ -77,14 +77,16 @@ export function FlowLine({ points, radius = 0.012, color, flowColor, system }: F
   );
 
   const flowMesh = useRef<Mesh>(null);
+  const mode = useContext(ModelModeContext);
   const systemOf = useMemo(() => Object.fromEntries(drone.parts.map((p) => [p.id, p.system])), [drone]);
 
   useFrame((_, dt) => {
     const s = useStore.getState();
     const active =
-      s.focusSystem === system ||
-      (s.hoveredId !== null && systemOf[s.hoveredId] === system) ||
-      (s.selectedId !== null && systemOf[s.selectedId] === system);
+      mode.interactive &&
+      (s.focusSystem === system ||
+        (s.hoveredId !== null && systemOf[s.hoveredId] === system) ||
+        (s.selectedId !== null && systemOf[s.selectedId] === system));
     flowMat.opacity = damp(flowMat.opacity, active ? 1 : 0, 6, dt);
     texture.offset.x -= dt * 1.6;
     if (flowMesh.current) flowMesh.current.visible = flowMat.opacity > 0.01;

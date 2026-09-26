@@ -1,4 +1,5 @@
 import type { DroneDef } from '../../types';
+import { shahed136Assembly } from './shahed136Assembly';
 
 /**
  * Content is kept at encyclopedia / museum-exhibit level: what each part is and does,
@@ -469,4 +470,5 @@ export const shahed136: DroneDef = {
     authorUrl: 'https://sketchfab.com/Bullet3D',
     url: 'https://sketchfab.com/3d-models/hesa-shahed-136-3d-cad-model-e09fba235055433ba7bb7fb5a0d4da87',
   },
+  assembly: shahed136Assembly,
 };

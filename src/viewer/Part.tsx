@@ -11,7 +11,8 @@ export const DroneContext = createContext<DroneDef | null>(null);
 
 /**
  * How a model is being shown. The anatomy viewer is interactive (picking, X-ray,
- * explode, highlights). Other scenes, like the launch, show the model as-is.
+ * explode, highlights). Other scenes, like the launch or the factory, show the model
+ * as-is or move its parts themselves.
  */
 export interface ModelMode {
   interactive: boolean;
@@ -19,6 +20,8 @@ export interface ModelMode {
   hidden?: ReadonlySet<string>;
   /** Propeller speed override in rad/s; otherwise the "Propeller" toggle decides. */
   propSpeed?: () => number;
+  /** Called every frame with each part's group, for scenes that move parts (e.g. the factory). */
+  animate?: (id: string, group: Group) => void;
 }
 
 export const ModelModeContext = createContext<ModelMode>({ interactive: true });
@@ -96,7 +99,11 @@ export function Part({ id, children }: { id: string; children: ReactNode }) {
 
   useFrame((state, dt) => {
     const g = group.current;
-    if (!g || !def || !mode.interactive) return;
+    if (!g || !def) return;
+    if (!mode.interactive) {
+      mode.animate?.(id, g);
+      return;
+    }
     const s = useStore.getState();
 
     // Explode: slide the part along its explode vector.
