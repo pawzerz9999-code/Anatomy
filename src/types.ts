@@ -45,7 +45,7 @@ export interface PartDef {
   details: string;
   funFact?: string;
   specs?: Spec[];
-  /** Where the part moves (in metres) when the explode slider is at 100%. */
+  /** Where the part moves (in metres) when the drone is fully exploded. */
   explode: Vec3;
 }
 
@@ -84,6 +84,9 @@ export interface DroneDef {
   category: DroneCategory;
   tagline: string;
   overview: string;
+  /** A handful of headline numbers, shown as big tiles. Keep values short. */
+  stats: Spec[];
+  /** The full list of key facts. */
   specs: Spec[];
   sections: InfoSection[];
   /** How later or foreign-built versions differ from the one modelled. */

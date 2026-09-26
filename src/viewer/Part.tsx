@@ -17,7 +17,7 @@ export interface ModelMode {
   interactive: boolean;
   /** Part ids not to draw (e.g. the booster, when the launch scene animates it separately). */
   hidden?: ReadonlySet<string>;
-  /** Propeller speed override in rad/s; otherwise the "Propeller" toggle decides. */
+  /** Propeller speed override in rad/s; otherwise the store's `spinProp` decides. */
   propSpeed?: () => number;
 }
 

@@ -13,7 +13,7 @@ export const shahed136: DroneDef = {
   name: 'Shahed-136',
   aka: 'Geran-2 (Russian-built version)',
   category: 'kamikaze',
-  tagline: 'Long-range one-way attack drone ("kamikaze" drone)',
+  tagline: 'Long-range one-way attack ("kamikaze") drone',
   overview:
     'The Shahed-136 is a one-way attack drone, often called a "kamikaze drone". It was designed in Iran by Shahed ' +
     'Aviation Industries and is produced together with the state aircraft maker HESA. Instead of dropping bombs and ' +
@@ -21,6 +21,14 @@ export const shahed136: DroneDef = {
     'became widely known after Russia began using it in Ukraine in 2022 under the name Geran-2. It is slow and loud ' +
     '(people compare its engine to a moped), but it is cheap compared with a cruise missile, so it can be launched ' +
     'in large numbers. This model shows the original Iranian design.',
+  stats: [
+    { label: 'Length', value: '≈ 3.5 m' },
+    { label: 'Wingspan', value: '≈ 2.5 m' },
+    { label: 'Weight', value: '≈ 200 kg' },
+    { label: 'Top speed', value: '≈ 185 km/h' },
+    { label: 'Range (claimed)', value: '2,500 km' },
+    { label: 'Engine', value: '≈ 50 hp' },
+  ],
   specs: [
     { label: 'Length', value: '≈ 3.5 m' },
     { label: 'Wingspan', value: '≈ 2.5 m' },

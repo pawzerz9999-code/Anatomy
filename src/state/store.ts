@@ -28,6 +28,10 @@ interface ViewerState {
   autoRotate: boolean;
   spinProp: boolean;
   search: string;
+  /** Systems expanded in the parts list. */
+  openSystems: Partial<Record<SystemId, boolean>>;
+  /** Show the "drag to spin / tap a part" hint until the first interaction. */
+  hint: boolean;
   camera: CameraCommand;
 
   setView: (view: ViewMode) => void;
@@ -44,11 +48,16 @@ interface ViewerState {
   setAutoRotate: (on: boolean) => void;
   setSpinProp: (on: boolean) => void;
   setSearch: (s: string) => void;
+  toggleOpen: (id: SystemId) => void;
+  dismissHint: () => void;
   showAll: () => void;
   resetView: () => void;
 }
 
 let nonce = 0;
+
+// People who ask their system for less motion get a still model and propeller.
+const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export const useStore = create<ViewerState>((set, get) => ({
   droneId: 'shahed-136',
@@ -63,9 +72,11 @@ export const useStore = create<ViewerState>((set, get) => ({
   xray: 'off',
   lensRadius: 110,
   labels: false,
-  autoRotate: true,
-  spinProp: true,
+  autoRotate: !reducedMotion,
+  spinProp: !reducedMotion,
   search: '',
+  openSystems: {},
+  hint: true,
   camera: { kind: 'reset', nonce: nonce++ },
 
   setView: (view) => set({ view }),
@@ -79,6 +90,9 @@ export const useStore = create<ViewerState>((set, get) => ({
         // A part hidden inside the shell can't be seen with X-ray off, so switch it on.
         xray: part?.inside && s.xray === 'off' ? 'full' : s.xray,
         camera: id && flyTo ? { kind: 'part', id, nonce: nonce++ } : s.camera,
+        // Open the part's system in the parts list so it can be seen there too.
+        openSystems: part ? { ...s.openSystems, [part.system]: true } : s.openSystems,
+        hint: id ? false : s.hint,
       };
     }),
   hover: (id) => {
@@ -96,6 +110,8 @@ export const useStore = create<ViewerState>((set, get) => ({
       xray: id ? 'full' : s.xray,
       autoRotate: id ? false : s.autoRotate,
       camera: id ? { kind: 'system', id, nonce: nonce++ } : s.camera,
+      openSystems: id ? { ...s.openSystems, [id]: true } : s.openSystems,
+      hint: id ? false : s.hint,
     })),
   setExplode: (explode) => set({ explode }),
   setXray: (xray) => set((s) => ({ xray, focusSystem: xray === 'full' ? s.focusSystem : null })),
@@ -104,6 +120,10 @@ export const useStore = create<ViewerState>((set, get) => ({
   setAutoRotate: (autoRotate) => set({ autoRotate }),
   setSpinProp: (spinProp) => set({ spinProp }),
   setSearch: (search) => set({ search }),
+  toggleOpen: (id) => set((s) => ({ openSystems: { ...s.openSystems, [id]: !s.openSystems[id] } })),
+  dismissHint: () => {
+    if (get().hint) set({ hint: false });
+  },
   showAll: () => set({ hiddenParts: {}, hiddenSystems: {}, isolatedId: null, focusSystem: null }),
   resetView: () =>
     set({

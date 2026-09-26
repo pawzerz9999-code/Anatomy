@@ -6,7 +6,7 @@ import { ChevronIcon, DroneIcon, LayersIcon } from './ui/icons';
 import { InfoPanel } from './ui/InfoPanel';
 import { PartsTree } from './ui/PartsTree';
 import { RealisticView } from './ui/RealisticView';
-import { FocusBanner, Toolbar } from './ui/Toolbar';
+import { StageBanners, Toolbar } from './ui/Toolbar';
 import { Viewer } from './viewer/Viewer';
 
 const NEXT_XRAY: Record<XrayMode, XrayMode> = { off: 'lens', lens: 'full', full: 'off' };
@@ -48,6 +48,7 @@ export default function App() {
   const droneId = useStore((s) => s.droneId);
   const view = useStore((s) => s.view);
   const setView = useStore((s) => s.setView);
+  const dismissHint = useStore((s) => s.dismissHint);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const drone = DRONES[droneId];
   const category = CATEGORIES.find((c) => c.id === drone.category);
@@ -62,7 +63,7 @@ export default function App() {
             Drone <b>Anatomy</b>
           </span>
         </div>
-        <button className="drone-picker" onClick={() => setLibraryOpen(true)} aria-haspopup="dialog">
+        <button className="drone-picker" onClick={() => setLibraryOpen(true)} aria-haspopup="dialog" title="Choose a drone">
           <LayersIcon />
           <span className="picker-text">
             <strong>{drone.name}</strong>
@@ -84,11 +85,11 @@ export default function App() {
         <PartsTree drone={drone} />
       </aside>
 
-      <main className="stage">
+      <main className="stage" onPointerDown={dismissHint}>
         {view === 'anatomy' ? (
           <>
             <Viewer />
-            <FocusBanner />
+            <StageBanners />
             <Toolbar />
           </>
         ) : (

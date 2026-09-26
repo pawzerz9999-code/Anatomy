@@ -34,6 +34,15 @@ describe.each(Object.values(DRONES))('$name data', (drone) => {
     expect(drone.specs.length).toBeGreaterThan(3);
   });
 
+  it('has a few short headline stats for the big tiles', () => {
+    expect(drone.stats.length).toBeGreaterThanOrEqual(3);
+    expect(drone.stats.length).toBeLessThanOrEqual(6);
+    for (const s of drone.stats) {
+      expect(s.value.length, s.label).toBeLessThanOrEqual(12);
+      expect(s.label.length, s.label).toBeLessThanOrEqual(16);
+    }
+  });
+
   it('has a live catalog entry', () => {
     expect(CATALOG.find((c) => c.id === drone.id)?.status).toBe('live');
   });

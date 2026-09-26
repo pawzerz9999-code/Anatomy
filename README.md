@@ -13,18 +13,20 @@ The first drone is the **Shahed-136**, a long-range one-way attack ("kamikaze") 
 
 ## Features
 
-- **360° viewer**: drag to rotate, scroll or pinch to zoom, right-drag to pan. The turntable spins it on its own.
-- **X-ray, three modes**
+- **Easy to pick up**: an icon toolbar, a short "drag / zoom / tap" hint on your first visit, key numbers shown as big tiles, and the longer reading tucked into **Learn more** sections you open when you want them.
+- **360° viewer**: drag to rotate, scroll or pinch to zoom, right-drag to pan. **Spin** turns the model slowly on its own.
+- **X-ray, three modes** (the first three toolbar buttons)
+  - **Solid**: the normal model.
   - **Lens**: a see-through circle follows your pointer (or finger) so you can look inside. Parts under the lens light up, and hovering one shows its name. Shift + scroll resizes the lens.
-  - **Full**: the whole shell turns to glass.
-  - **System focus**: click a system (for example **Fuel system**) to X-ray it. Its parts glow and everything else fades. Fuel visibly flows from the tank through the filter and pump to the engine.
-- **Tap any part** to fly the camera to it and read what it does, a "Did you know?" fact and key specs. Parts inside the shell switch X-ray on by themselves.
+  - **X-ray**: the whole shell turns to glass.
+- **Systems**: tap a system (for example **Fuel system**) to X-ray it. Its parts glow, everything else fades, and its parts list opens. Fuel visibly flows from the tank through the filter and pump to the engine.
+- **Tap any part** to fly the camera to it and see what it is, a fun fact and key specs, with **How it works** one tap away. Parts inside the shell switch X-ray on by themselves.
 - **Labels**: callouts name every part at once, and hovering a label highlights its part.
-- **Explode**: the shell lifts away to show the internals in place.
-- **Layers**: show, hide or isolate any part or whole system (airframe, propulsion, fuel, flight control, navigation, power, payload).
+- **Explode**: one tap pulls the drone apart to show the internals in place; tap again to put it back.
+- **Layers**: show, hide or isolate any part or whole system (airframe, propulsion, fuel, flight control, navigation, power, payload). A **Show all** pill brings everything back.
 - **Realistic tab**: the detailed [Sketchfab model](https://sketchfab.com/3d-models/hesa-shahed-136-3d-cad-model-e09fba235055433ba7bb7fb5a0d4da87) by nitroexpress, embedded with Sketchfab's player.
 - **Library**: every drone category (kamikaze, interceptors, multirotor, fixed-wing, VTOL, helicopter, nano, utility).
-- Works on phones, tablets and desktops. Keyboard shortcuts: `X` X-ray · `E` explode · `L` labels · `R` reset · `Esc` deselect.
+- Works on phones, tablets and desktops, and stays still for people who turn on "reduce motion". Keyboard shortcuts: `X` X-ray · `E` explode · `L` labels · `R` reset · `Esc` deselect.
 
 ## Run it
 

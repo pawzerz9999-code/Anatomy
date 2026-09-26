@@ -16,6 +16,7 @@ export function RealisticView({ drone }: { drone: DroneDef }) {
         allowFullScreen
       />
       <p className="credit">
+        Model:{' '}
         <a href={sf.url} target="_blank" rel="noopener noreferrer nofollow">
           {sf.title}
         </a>{' '}
@@ -23,7 +24,7 @@ export function RealisticView({ drone }: { drone: DroneDef }) {
         <a href={sf.authorUrl} target="_blank" rel="noopener noreferrer nofollow">
           {sf.author}
         </a>{' '}
-        on Sketchfab. Switch to <b>Anatomy</b> to explore the parts.
+        on Sketchfab
       </p>
     </div>
   );

@@ -177,7 +177,7 @@ function Mat({ color, rough = 0.5, metal = 0.3 }: { color: string; rough?: numbe
   return <meshStandardMaterial color={color} roughness={rough} metalness={metal} />;
 }
 
-/** Spins the propeller: from the "Propeller" toggle, or from the scene (e.g. the launch). */
+/** Spins the propeller: from the store's `spinProp`, or from the scene (e.g. the launch). */
 function SpinningProp({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null);
   const speed = useRef(0);
