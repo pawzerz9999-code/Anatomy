@@ -58,6 +58,7 @@ src/
   data/systems.ts               the 7 colour-coded systems
   models/shahed136/…Model.tsx   the 3D model, built from code; one <Part id> per part
   models/geometry.ts            shape helpers (body of revolution, wing plates, twisted blades)
+  models/GltfModel.tsx, gltf.ts loads a .glb model file and sorts its nodes into parts
   viewer/Part.tsx               picking, highlight, hide/isolate, focus, explode, X-ray per part
   viewer/xray.ts                shader patch for the X-ray lens and glass shell
   viewer/FlowLine.tsx           pipes with animated flow (fuel lines)
@@ -66,7 +67,23 @@ src/
   ui/                           parts tree, info panel, toolbar, library, realistic tab
 ```
 
-The 3D model is **built from code** (no model files), so every part is its own clickable piece and the app has no licensing issues. The data layer also supports glTF models (`model: { kind: 'gltf', url, nodeMap }`), so a detailed Blender or purchased model can replace the code-built one later.
+A drone's 3D model is either **built in code** or **loaded from a model file** (.glb / .gltf). Either way every part is its own clickable piece, so X-ray, explode, labels and the parts list work the same.
+
+### Using a model file
+
+1. Put the file in `public/models/`, e.g. `public/models/shahed-136.glb`. Big files can be shrunk with `npx @gltf-transform/cli optimize in.glb out.glb --compress meshopt`.
+2. In the drone's data file, set `model` to
+   ```ts
+   model: {
+     kind: 'gltf',
+     url: 'models/shahed-136.glb',
+     nodeMap: { Wing: 'wing', '/^Propeller/i': 'propeller' }, // node name (or /regex/) → part id
+     fallbackPart: 'center-fuselage', // optional: gets every node not in nodeMap
+     rotation: [0, -Math.PI / 2, 0],  // optional: turn it so the nose points to +X and up is +Y
+     length: 3.5,                     // real length in metres; the model is scaled to it
+   },
+   ```
+3. `npm test` checks that the file exists and that every part has nodes.
 
 ### Adding a drone
 

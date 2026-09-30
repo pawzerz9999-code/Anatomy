@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CATALOG, CATEGORIES, DRONES } from '../src/data/drones';
 import { SYSTEMS } from '../src/data/systems';
@@ -43,6 +43,15 @@ describe.each(Object.values(DRONES))('$name data', (drone) => {
     }
   });
 
+  it.runIf(drone.model.kind === 'gltf')('maps its model file onto exactly its parts', () => {
+    if (drone.model.kind !== 'gltf') return;
+    expect(existsSync(new URL(`../public/${drone.model.url}`, import.meta.url)), drone.model.url).toBe(true);
+    const ids = new Set(drone.parts.map((p) => p.id));
+    const mapped = new Set([...Object.values(drone.model.nodeMap), ...(drone.model.fallbackPart ? [drone.model.fallbackPart] : [])]);
+    for (const id of mapped) expect(ids.has(id), `nodeMap part "${id}"`).toBe(true);
+    for (const id of ids) expect(mapped.has(id), `part "${id}" has no nodes in the model`).toBe(true);
+  });
+
   it('has a live catalog entry', () => {
     expect(CATALOG.find((c) => c.id === drone.id)?.status).toBe('live');
   });
@@ -61,7 +70,7 @@ describe('Shahed-136', () => {
     expect(ids).toEqual(expect.arrayContaining(['elevons', 'rudders', 'servos']));
   });
 
-  it('uses exactly the part ids that its 3D model renders', () => {
+  it.runIf(drone.model.kind === 'procedural')('uses exactly the part ids that its 3D model renders', () => {
     const source = readFileSync(new URL('../src/models/shahed136/Shahed136Model.tsx', import.meta.url), 'utf8');
     const modelIds = [...source.matchAll(/<Part id="([^"]+)"/g)].map((m) => m[1]).sort();
     expect(modelIds).toEqual(drone.parts.map((p) => p.id).sort());

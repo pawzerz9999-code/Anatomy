@@ -94,9 +94,27 @@ export interface DroneDef {
   /** Public sources the model and text are based on. */
   sources: SourceLink[];
   parts: PartDef[];
-  /** The 3D model: built in code now; a glTF file with a mesh-name → part-id map later. */
-  model: { kind: 'procedural' } | { kind: 'gltf'; url: string; nodeMap: Record<string, string> };
+  /** The 3D model: built in code, or loaded from a glTF / GLB file. */
+  model: { kind: 'procedural' } | GltfModelDef;
   sketchfab?: SketchfabEmbed;
+}
+
+/** A model loaded from a .glb / .gltf file, with its nodes sorted into parts. */
+export interface GltfModelDef {
+  kind: 'gltf';
+  /** Path under `public/`, e.g. `models/shahed-136.glb`. */
+  url: string;
+  /**
+   * Node name → part id. A node's whole subtree goes to that part. A key written as
+   * `/pattern/flags` is a regular expression, e.g. `/^Propeller/i`.
+   */
+  nodeMap: Record<string, string>;
+  /** Part that gets every mesh not matched by `nodeMap`. Without it, those meshes are shown but can't be picked. */
+  fallbackPart?: string;
+  /** Rotation in radians (XYZ) that turns the file into our axes: nose towards +X, up +Y. */
+  rotation?: Vec3;
+  /** The model is scaled so its longest side is this long, in metres. */
+  length: number;
 }
 
 export interface CatalogEntry {

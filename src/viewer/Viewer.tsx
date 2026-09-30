@@ -1,13 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, Environment, Grid, Lightformer } from '@react-three/drei';
+import { ContactShadows, Environment, Grid, Lightformer, useProgress } from '@react-three/drei';
 import { DRONES } from '../data/drones';
 import { MODELS } from '../models';
+import { GltfModel } from '../models/GltfModel';
 import { useStore } from '../state/store';
 import { CameraRig, DEFAULT_CAMERA } from './CameraRig';
 import { LabelsDriver, LabelsOverlay } from './Labels';
 import { DroneContext } from './Part';
-import { damp, runtime } from './runtime';
+import { damp, partRegistry, runtime } from './runtime';
 import { xrayUniforms } from './xray';
 
 const FLOOR_Y = -1.25;
@@ -24,7 +25,8 @@ function SceneDriver() {
     xrayUniforms.uRadius.value = runtime.lensPx;
     xrayUniforms.uLens.value = damp(xrayUniforms.uLens.value, s.xray === 'lens' && runtime.pointerInside ? 1 : 0, 12, dt);
     xrayUniforms.uFull.value = damp(xrayUniforms.uFull.value, s.xray === 'full' ? 1 : 0, 6, dt);
-    if (!ready.current) {
+    // Ready once the model's parts have mounted (a model file can take a moment to load).
+    if (!ready.current && partRegistry.size > 0) {
       ready.current = true;
       document.body.dataset.sceneReady = 'true';
     }
@@ -59,6 +61,18 @@ function Studio() {
         infiniteGrid
       />
     </>
+  );
+}
+
+/** "Loading model… 42%" while a model file downloads. */
+function LoadingOverlay() {
+  const { active, progress } = useProgress();
+  if (!active) return null;
+  return (
+    <div className="loading" role="status">
+      <span className="spinner" aria-hidden />
+      Loading model… {Math.round(progress)}%
+    </div>
   );
 }
 
@@ -114,12 +128,15 @@ export function Viewer() {
         <SceneDriver />
         <Studio />
         <DroneContext.Provider value={drone}>
-          <Model />
+          <Suspense fallback={null}>
+            {drone.model.kind === 'gltf' ? <GltfModel model={drone.model} /> : Model && <Model />}
+          </Suspense>
           <LabelsDriver drone={drone} />
           <CameraRig />
         </DroneContext.Provider>
       </Canvas>
       <LabelsOverlay drone={drone} />
+      <LoadingOverlay />
     </div>
   );
 }
